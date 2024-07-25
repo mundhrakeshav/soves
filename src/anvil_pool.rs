@@ -9,7 +9,7 @@ pub struct AnvilPool{
 
 
 impl AnvilPool {
-    pub fn new(chainIDs: &[u64]) -> Self {
+    pub fn new(chainIDs: &[u64], ) -> Self {
         AnvilPool {
             cfg: ChainConfig::new(chainID),
         }
