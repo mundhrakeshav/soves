@@ -1,0 +1,15 @@
+[package]
+name = "soves"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alloy = { version = "0.2.0", features = [
+    "full",
+    "node-bindings",
+    "rpc-types-debug",
+    "rpc-types-trace",
+    "json-rpc",
+    "rpc-client",
+] }
+tokio = { version = "1", features = ["full"] }
