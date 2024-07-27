@@ -2630,6 +2630,8 @@ name = "soves"
 version = "0.1.0"
 dependencies = [
  "alloy",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
