@@ -1,9 +1,5 @@
-mod integration_storage;
-mod service_storage;
 
-use service_storage::ServiceStorage;
-
-use crate::{controller::setup_router, entity::errors::SovesError, rpc_factory::RPCFactory, vault};
+use crate::{controller::setup_router, entity::errors::SovesError, vault};
 
 pub async fn app(app_name: &str) -> Result<(), SovesError> {
     let config = vault::get_vault_config(app_name).await?;
@@ -11,14 +7,9 @@ pub async fn app(app_name: &str) -> Result<(), SovesError> {
     // make address before as ss consumes config
     let addr = format!("{}:{}", config.host, config.host_port);
 
-    // Create the RPCFactory
-    let rpc_factory = RPCFactory::new(&config.chain_to_rpcs)?;
+    let app = setup_router(config)?;
 
-    let ss = ServiceStorage::new(config, &rpc_factory)?;
-
-    let app = setup_router(ss.decoding_service);
-
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(addr.clone()).await.unwrap();
 
     axum::serve(listener, app).await.unwrap();
 

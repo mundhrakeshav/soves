@@ -1,20 +1,39 @@
+use std::sync::Arc;
+use std::time;
+
+use crate::entity::traits::ClientProvider;
 use crate::utils;
-use crate::{entity::errors::SovesError, rpc_factory::RPCFactory};
+use crate::entity::errors::SovesError;
 
 use alloy::primitives::TxHash;
 use alloy::rpc::types::trace::geth::CallFrame;
 
-pub struct DecodingService<'a> {
-    rpc_factory: &'a RPCFactory,
+pub struct DecodingService<P>
+where
+    P: ClientProvider,
+{
+    rpc_factory: Arc<P>,
 }
 
-impl<'a> DecodingService<'a> {
-    pub fn new(rpc_factory: &'a RPCFactory) -> Self {
+impl<P> DecodingService<P>
+where
+    P: ClientProvider,
+{
+    pub fn new(rpc_factory: Arc<P>) -> Self
+    where
+        P: ClientProvider,
+    {
         Self { rpc_factory }
     }
 
     pub async fn decode(&self, tx_hash: TxHash, chain_id: u32) -> Result<CallFrame, SovesError> {
-        let trace = utils::trace::get_trace_for_hash(self.rpc_factory, tx_hash, chain_id).await?;
+        let provider = match self.rpc_factory.as_ref().get_client(chain_id) {
+            None => return Err(SovesError::ClientNotFound(chain_id)),
+            Some(provider) => provider,
+        };
+        
+        let trace = utils::trace::get_trace_for_hash(provider, tx_hash).await?;
+
         Ok(trace)
     }
 }

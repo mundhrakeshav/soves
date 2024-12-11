@@ -1,3 +1,6 @@
+use crate::entity::errors::SovesError;
+use alloy::providers::{Provider, RootProvider};
+use alloy::transports::Transport;
 use alloy::{
     primitives::TxHash,
     providers::ext::DebugApi,
@@ -7,20 +10,13 @@ use alloy::{
     },
 };
 
-use crate::entity::{errors::SovesError, traits::ProviderFactory};
-
-pub async fn get_trace_for_hash<T: ProviderFactory>(
-    rpc_factory: T,
+pub async fn get_trace_for_hash<T>(
+    provider: &RootProvider<T>,
     tx_hash: TxHash,
-    chain_id: u32,
-) -> Result<CallFrame, SovesError> {
-    let client_opt = rpc_factory.client(chain_id);
-
-    let provider = match client_opt {
-        None => return Err(SovesError::ClientNotFound(chain_id)),
-        Some(client) => client,
-    };
-
+) -> Result<CallFrame, SovesError>
+where
+    T: Transport + Clone,
+{
     // Trace with built-in call tracer.
     let trace_options = GethDebugTracingOptions {
         config: GethDefaultTracingOptions {
@@ -38,14 +34,14 @@ pub async fn get_trace_for_hash<T: ProviderFactory>(
         ..Default::default()
     };
 
+
     let trace = provider
         .debug_trace_transaction(tx_hash, trace_options)
         .await
         .map_err(|e| {
             SovesError::ProviderError(format!(
-                "failed to get trace for txn hash: {}, chain: {}, err: {}",
+                "failed to get trace for txn hash: {}, err: {}",
                 tx_hash,
-                chain_id,
                 e.to_string()
             ))
         })?
