@@ -1,9 +1,8 @@
 use std::sync::Arc;
-use std::time;
 
+use crate::entity::errors::SovesError;
 use crate::entity::traits::ClientProvider;
 use crate::utils;
-use crate::entity::errors::SovesError;
 
 use alloy::primitives::TxHash;
 use alloy::rpc::types::trace::geth::CallFrame;
@@ -31,7 +30,7 @@ where
             None => return Err(SovesError::ClientNotFound(chain_id)),
             Some(provider) => provider,
         };
-        
+
         let trace = utils::trace::get_trace_for_hash(provider, tx_hash).await?;
 
         Ok(trace)

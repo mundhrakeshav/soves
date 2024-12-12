@@ -1,3 +1,4 @@
+use tracing::info;
 
 use crate::{controller::setup_router, entity::errors::SovesError, vault};
 
@@ -11,6 +12,7 @@ pub async fn app(app_name: &str) -> Result<(), SovesError> {
 
     let listener = tokio::net::TcpListener::bind(addr.clone()).await.unwrap();
 
+    info!("listening on {}", addr);
     axum::serve(listener, app).await.unwrap();
 
     Ok(())

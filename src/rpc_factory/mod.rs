@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
 use alloy::{
-    providers::{ProviderBuilder, RootProvider}, transports::http::{reqwest::Url, Client, Http}
+    providers::{ProviderBuilder, RootProvider},
+    transports::http::{reqwest::Url, Client, Http},
 };
 
-use crate::entity::{errors::SovesError, traits::{ClientProvider}};
+use crate::entity::{errors::SovesError, traits::ClientProvider};
 
-pub struct RPCFactory{
+pub struct RPCFactory {
     http_client: HashMap<u32, RootProvider<Http<Client>>>,
 }
 
@@ -30,10 +31,10 @@ impl RPCFactory {
                     rpc_string, e
                 )))
             })?;
-    
+
             // Build the provider using the parsed URL
-            let provider= ProviderBuilder::new().on_http(rpc_url);
-        
+            let provider = ProviderBuilder::new().on_http(rpc_url);
+
             // Insert the provider into the clients hashmap
             clients.insert(chain_id, provider);
         }
@@ -49,6 +50,6 @@ impl ClientProvider for RPCFactory {
     type ClientType = Http<Client>;
 
     fn get_client(&self, chain_id: u32) -> Option<&RootProvider<Self::ClientType>> {
-         self.http_client.get(&chain_id)
+        self.http_client.get(&chain_id)
     }
 }

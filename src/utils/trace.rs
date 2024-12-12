@@ -1,5 +1,7 @@
+use std::time;
+
 use crate::entity::errors::SovesError;
-use alloy::providers::{Provider, RootProvider};
+use alloy::providers::RootProvider;
 use alloy::transports::Transport;
 use alloy::{
     primitives::TxHash,
@@ -9,6 +11,7 @@ use alloy::{
         GethDebugTracingOptions, GethDefaultTracingOptions,
     },
 };
+use log::info;
 
 pub async fn get_trace_for_hash<T>(
     provider: &RootProvider<T>,
@@ -33,8 +36,6 @@ where
         .into(),
         ..Default::default()
     };
-
-
     let trace = provider
         .debug_trace_transaction(tx_hash, trace_options)
         .await
