@@ -74,8 +74,6 @@ fn get_selectors_set_for_trace(trace: &CallFrame) -> HashSet<String> {
 
     // Recursively collect selectors from child calls
     for child_trace in &trace.calls {
-        let s: HashSet<String> = get_selectors_set_for_trace(child_trace);
-        println!("{:?}", s);
         selectors.extend(get_selectors_set_for_trace(child_trace));
     }
 
