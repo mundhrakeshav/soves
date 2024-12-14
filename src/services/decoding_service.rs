@@ -32,7 +32,8 @@ where
         };
 
         let trace = utils::trace::get_trace_for_hash(provider, tx_hash).await?;
-
+        let selectors = utils::trace::get_selectors_for_trace(&trace);
+        println!("{:?}", selectors);
         Ok(trace)
     }
 }

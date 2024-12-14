@@ -1,5 +1,6 @@
 BIN=$(PWD)/.bin
-DATABASE_URL=postgres://postgres:postgres@localhost:5434/soves
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/soves
+MIGRATIONS_DIR = ./migrations/
 
 .PHONY: create-db
 create-db: ## - Create the database
@@ -24,7 +25,21 @@ download-tools: ## - Build sqlx and move it to bin directory
 	@echo "Removed sqlx-0.8.2"
 	@echo "Downloaded tools"
 
+.PHONY: run-mig
+run-mig: ## - Run database migrations, e.g., `make run-mig`
+	$(info $(M) running DB migrations...)
+	@$(BIN)/sqlx migrate run --source "$(MIGRATIONS_DIR)" --database-url "$(DATABASE_URL)"
+
+.PHONY: add-migration
+add-mig: ## - Create a new database migration file, e.g., `make db-create-migration name_of_migration`
+	$(info $(M) creating DB migration...)
+	@$(BIN)/sqlx migrate add -r $(filter-out $@,$(MAKECMDGOALS))
+
 .PHONY: help
 help: ## - Show this help message
 	@printf "\033[32mUsage: make [target]\n\n\033[0m"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+.PHONY: help
+%: help
+	@:
