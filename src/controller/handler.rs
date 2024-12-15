@@ -28,6 +28,6 @@ pub async fn decode_tx_handler(
         .await
     {
         Ok(t) => Ok(Json(t)),
-        Err(e) => Err(e.into_response_error()),
+        Err(e) => Err(e.into_api_error()),
     }
 }

@@ -16,7 +16,7 @@ pub enum SovesError {
 }
 
 impl SovesError {
-    pub fn into_response_error(self) -> APIError {
+    pub fn into_api_error(self) -> APIError {
         error!("into_response_error: {:?}", self);
         match self {
             Self::ClientNotFound(chain_id) => APIError {
@@ -28,6 +28,12 @@ impl SovesError {
                 status_code: StatusCode::INTERNAL_SERVER_ERROR,
             },
         }
+    }
+}
+
+impl IntoResponse for SovesError {
+    fn into_response(self) -> Response<Body> {
+        self.into_api_error().into_response()
     }
 }
 
@@ -45,4 +51,9 @@ impl IntoResponse for APIError {
 
         (self.status_code, body).into_response()
     }
+}
+
+#[derive(Debug, Clone)]
+pub enum IntegrationError {
+    OpenchainError(String),
 }

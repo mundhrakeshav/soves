@@ -5,6 +5,7 @@ mod rpc_factory;
 mod services;
 mod utils;
 mod vault;
+mod integrations;
 
 use app::app;
 use entity::errors::SovesError;
