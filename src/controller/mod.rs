@@ -1,4 +1,5 @@
 mod app_state;
+mod integration_storage;
 mod handler;
 use crate::{
     entity::{config::Config, errors::SovesError},
@@ -59,7 +60,8 @@ pub fn setup_router(config: Config) -> Result<Router, SovesError> {
     );
 
     let rpc_factory: Arc<RPCFactory> = Arc::new(RPCFactory::new(&config.chain_to_rpcs)?);
-    let app_state: Arc<AppState> = Arc::new(AppState::new(config, rpc_factory)?);
+    let app_state: Arc<AppState> = Arc::new(AppState::new(&config, rpc_factory)?);
+    let integration_storage = integration_storage::IntegrationStorage::new(&config);
 
     let app = Router::new()
         .route("/:chain_id/:tx_hash", get(decode_tx_handler))

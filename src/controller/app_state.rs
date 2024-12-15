@@ -11,7 +11,7 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn new(config: Config, rpc_factory: Arc<RPCFactory>) -> Result<Self, SovesError> {
+    pub fn new(config: &Config, rpc_factory: Arc<RPCFactory>) -> Result<Self, SovesError> {
         // Create the DecodingService with a reference to the RPCFactory
         let decoding_service = DecodingService::new(rpc_factory);
 

@@ -12,4 +12,6 @@ pub struct Config {
     pub host_port: String,
     #[serde(rename = "host")]
     pub host: String,
+    #[serde(rename = "openchainURL")]
+    pub openchain_url: String,
 }
